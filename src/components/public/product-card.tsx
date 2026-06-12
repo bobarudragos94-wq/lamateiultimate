@@ -8,11 +8,21 @@ import { useCart } from "@/store/cart";
 import { formatPrice, UNIT_LABELS } from "@/lib/utils";
 import { AvailabilityBadge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  CursorImagePreview,
+  supportsHoverPreview,
+} from "./cursor-image-preview";
 
 export function ProductCard({ product, categoryName }: { product: Product; categoryName: string }) {
   const addItem = useCart((state) => state.addItem);
   const [quantity, setQuantity] = useState(1);
   const [justAdded, setJustAdded] = useState(false);
+  const [cursor, setCursor] = useState<{ x: number; y: number } | null>(null);
+
+  function trackCursor(e: React.MouseEvent) {
+    if (!product.imageUrl || !supportsHoverPreview()) return;
+    setCursor({ x: e.clientX, y: e.clientY });
+  }
 
   function handleAdd() {
     addItem(
@@ -21,6 +31,7 @@ export function ProductCard({ product, categoryName }: { product: Product; categ
         name: product.name,
         unit: product.unit,
         price: product.price,
+        imageUrl: product.imageUrl,
       },
       quantity
     );
@@ -31,19 +42,45 @@ export function ProductCard({ product, categoryName }: { product: Product; categ
   }
 
   return (
-    <article className="group flex flex-col rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-lg hover:shadow-zinc-900/5">
-      <div className="relative mb-3 flex h-28 items-center justify-center rounded-xl bg-gradient-to-br from-zinc-100 to-zinc-50">
-        <Package
-          className="size-10 text-zinc-300 transition-transform duration-300 group-hover:scale-110 group-hover:text-orange-400"
-          aria-hidden
-        />
+    <article
+      className="group flex flex-col rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-zinc-300 hover:shadow-lg hover:shadow-zinc-900/5"
+      onMouseEnter={trackCursor}
+      onMouseMove={trackCursor}
+      onMouseLeave={() => setCursor(null)}
+    >
+      {/* image background matches the SVG illustrations' own backdrop */}
+      <div className="relative mb-3 flex h-32 items-center justify-center overflow-hidden rounded-xl bg-[#f2f2f0]">
+        {product.imageUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            loading="lazy"
+            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <Package
+            className="size-10 text-zinc-300 transition-transform duration-300 group-hover:scale-110 group-hover:text-orange-400"
+            aria-hidden
+          />
+        )}
         <span className="absolute left-2 top-2">
           <AvailabilityBadge availability={product.availability} />
         </span>
       </div>
+      {cursor && product.imageUrl && (
+        <CursorImagePreview
+          x={cursor.x}
+          y={cursor.y}
+          src={product.imageUrl}
+          title={product.name}
+        />
+      )}
 
       <div className="flex-1">
-        <p className="text-xs font-medium uppercase tracking-wide text-zinc-400">{categoryName}</p>
+        <p className="font-mono text-[10px] font-semibold uppercase tracking-[0.16em] text-zinc-400">
+          {categoryName}
+        </p>
         <h3 className="mt-1 text-sm font-semibold leading-snug text-zinc-900">{product.name}</h3>
         {product.description && (
           <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-zinc-500">
@@ -53,14 +90,14 @@ export function ProductCard({ product, categoryName }: { product: Product; categ
       </div>
 
       <div className="mt-3 flex items-baseline justify-between">
-        <span className="text-base font-bold text-zinc-900">
+        <span className="font-mono text-base font-bold text-zinc-900">
           {product.price == null ? (
             <span className="text-sm font-semibold text-orange-600">Preț la cerere</span>
           ) : (
             formatPrice(product.price)
           )}
         </span>
-        <span className="text-xs text-zinc-500">/ {UNIT_LABELS[product.unit]}</span>
+        <span className="font-mono text-xs text-zinc-500">/ {UNIT_LABELS[product.unit]}</span>
       </div>
 
       <div className="mt-3 flex items-center gap-2">

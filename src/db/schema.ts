@@ -56,6 +56,8 @@ export const products = sqliteTable("products", {
   unit: text("unit", { enum: PRODUCT_UNITS }).notNull().default("bucata"),
   // null price means "price on request"
   price: real("price"),
+  // path or URL to a product image shown in catalog and on hover preview
+  imageUrl: text("image_url"),
   availability: text("availability", { enum: AVAILABILITY }).notNull().default("IN_STOCK"),
   isActive: integer("is_active", { mode: "boolean" }).notNull().default(true),
   createdAt: integer("created_at", { mode: "timestamp" })

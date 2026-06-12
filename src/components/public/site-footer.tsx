@@ -4,12 +4,13 @@ import { BrickMark } from "./logo";
 
 export function SiteFooter() {
   return (
-    <footer id="contact" className="border-t border-zinc-200 bg-zinc-900 pb-24 text-zinc-300 md:pb-0">
+    <footer id="contact" className="bg-zinc-950 pb-24 text-zinc-300 md:pb-0">
+      <div className="hazard-stripe h-2" aria-hidden />
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2.5">
             <BrickMark className="bg-zinc-800" />
-            <span className="text-lg font-bold tracking-tight text-white">
+            <span className="font-display text-2xl font-bold uppercase leading-none tracking-wide text-white">
               Depozit<span className="text-orange-500">Construct</span>
             </span>
           </div>
@@ -19,7 +20,7 @@ export function SiteFooter() {
           </p>
         </div>
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500">Contact</h3>
+          <h3 className="tag-label text-zinc-500">Contact</h3>
           <ul className="mt-4 space-y-3 text-sm">
             <li className="flex items-start gap-3">
               <MapPin className="mt-0.5 size-4 shrink-0 text-orange-500" aria-hidden />
@@ -39,7 +40,7 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-zinc-500">Linkuri</h3>
+          <h3 className="tag-label text-zinc-500">Linkuri</h3>
           <ul className="mt-4 space-y-3 text-sm">
             <li>
               <Link href="/catalog" className="transition-colors hover:text-white">

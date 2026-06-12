@@ -7,6 +7,14 @@ import { cn } from "@/lib/utils";
 import { ProductCard } from "./product-card";
 import { EmptyState } from "@/components/ui/empty-state";
 
+// diacritic-insensitive matching: "amorsa" should find "Amorsă"
+function normalize(text: string) {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "");
+}
+
 export function CatalogClient({
   products,
   categories,
@@ -23,13 +31,13 @@ export function CatalogClient({
   );
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = normalize(query.trim());
     return products.filter((product) => {
       if (categoryId !== null && product.categoryId !== categoryId) return false;
       if (!q) return true;
       return (
-        product.name.toLowerCase().includes(q) ||
-        (product.description ?? "").toLowerCase().includes(q)
+        normalize(product.name).includes(q) ||
+        normalize(product.description ?? "").includes(q)
       );
     });
   }, [products, query, categoryId]);
@@ -43,7 +51,7 @@ export function CatalogClient({
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Caută produse: ciment, OSB, rigips..."
-          className="h-12 w-full rounded-2xl border border-zinc-200 bg-white pl-11 pr-10 text-sm shadow-sm transition-all placeholder:text-zinc-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+          className="h-12 w-full rounded-2xl border border-zinc-200 bg-white pl-11 pr-10 text-sm shadow-sm transition-all placeholder:text-zinc-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 [&::-webkit-search-cancel-button]:hidden"
           aria-label="Caută produse"
         />
         {query && (
@@ -73,7 +81,7 @@ export function CatalogClient({
         ))}
       </div>
 
-      <p className="mb-4 text-sm text-zinc-500" aria-live="polite">
+      <p className="tag-label mb-4 text-zinc-400" aria-live="polite">
         {filtered.length === 1 ? "1 produs" : `${filtered.length} produse`}
       </p>
 

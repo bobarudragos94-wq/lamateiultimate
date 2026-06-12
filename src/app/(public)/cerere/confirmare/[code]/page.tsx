@@ -35,8 +35,8 @@ export default async function ConfirmationPage({
         <div className="mx-auto mb-6 flex size-20 animate-scale-in items-center justify-center rounded-full bg-emerald-100">
           <CheckCircle2 className="size-10 text-emerald-600" aria-hidden />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-zinc-900 sm:text-3xl">
-          Cererea ta a fost trimisă!
+        <h1 className="font-display text-5xl font-bold uppercase tracking-tight text-zinc-900 sm:text-6xl">
+          Cererea a fost trimisă
         </h1>
         <p className="mt-3 text-zinc-500">
           Vei fi contactat pentru confirmare în cel mai scurt timp. Păstrează numărul cererii pentru
@@ -59,7 +59,7 @@ export default async function ConfirmationPage({
           {items.map((item) => (
             <li key={item.id} className="flex items-center justify-between gap-4 py-3 text-sm">
               <span className="text-zinc-700">{item.productName}</span>
-              <span className="shrink-0 font-semibold text-zinc-900">
+              <span className="shrink-0 font-mono font-semibold text-zinc-900">
                 {item.quantity} {UNIT_LABELS[item.unit as ProductUnit] ?? item.unit}
               </span>
             </li>
@@ -67,7 +67,7 @@ export default async function ConfirmationPage({
         </ul>
         <div className="mt-3 flex items-center justify-between border-t border-zinc-200 pt-4">
           <span className="text-sm font-medium text-zinc-500">Total estimativ</span>
-          <span className="text-base font-bold text-zinc-900">
+          <span className="font-mono text-base font-bold text-zinc-900">
             {request.estimatedTotal == null
               ? "Se calculează la ofertare"
               : formatPrice(request.estimatedTotal)}

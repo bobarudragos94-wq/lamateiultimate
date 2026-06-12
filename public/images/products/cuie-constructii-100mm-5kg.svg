@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <rect width="640" height="640" fill="#fafafa"/>
+  <rect width="640" height="640" fill="url(#bgGlow)"/>
+  <defs>
+    <radialGradient id="bgGlow" cx="0.5" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f1f1f0"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e4e4e7"/>
+      <stop offset="0.5" stop-color="#9ca3af"/>
+      <stop offset="1" stop-color="#d1d5db"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="320" cy="500" rx="185" ry="24" fill="#18181b" opacity="0.08"/>
+  
+  <g>
+    <path d="M180 256 L240 206 L520 206 L460 256 Z" fill="#dcc193"/>
+    <path d="M340 256 L400 206 L420 206 L360 256 Z" fill="#c9a36b"/>
+    <rect x="180" y="256" width="280" height="210" fill="#c9a36b"/>
+    <path d="M460 256 L520 206 L520 416 L460 466 Z" fill="#a87f4b"/>
+    <path d="M348 206 h24 v50 h-24 Z" fill="#e7e0d2" opacity="0.9"/>
+    <rect x="208" y="286" width="224" height="150" rx="10" fill="#fff"/>
+    <path d="M208 298 a10 10 0 0 1 10 -10 h204 a10 10 0 0 1 10 10 v36 h-224 Z" fill="#57534e"/>
+    <text x="320" y="318" font-family="Arial, Helvetica, sans-serif" font-size="21" font-weight="700" fill="#fff" text-anchor="middle">CUIE CONSTRUCȚII</text>
+    <text x="320" y="372" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#3f3f46" text-anchor="middle">100 mm</text>
+  <text x="320" y="400.6" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="700" fill="#3f3f46" text-anchor="middle">5 kg</text>
+  </g>
+</svg>

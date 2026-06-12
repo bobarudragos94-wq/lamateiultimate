@@ -22,7 +22,7 @@ export function Logo({ href = "/" }: { href?: string }) {
   return (
     <Link href={href} className="flex items-center gap-2.5 transition-opacity hover:opacity-80">
       <BrickMark />
-      <span className="text-lg font-bold tracking-tight text-zinc-900">
+      <span className="font-display text-2xl font-bold uppercase leading-none tracking-wide text-zinc-900">
         Depozit<span className="text-orange-500">Construct</span>
       </span>
     </Link>

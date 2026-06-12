@@ -1,12 +1,36 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import { PwaRegister } from "@/components/pwa-register";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin", "latin-ext"],
-  variable: "--font-inter",
+// Body face — humanist, warm, comfortable at small sizes.
+const workSans = localFont({
+  src: [
+    { path: "../fonts/WorkSans-Regular.ttf", weight: "400" },
+    { path: "../fonts/WorkSans-Bold.ttf", weight: "700" },
+  ],
+  variable: "--font-work-sans",
+  display: "swap",
+});
+
+// Display face — condensed industrial signage type, used for headlines only.
+const bigShoulders = localFont({
+  src: [
+    { path: "../fonts/BigShoulders-Regular.ttf", weight: "400" },
+    { path: "../fonts/BigShoulders-Bold.ttf", weight: "700" },
+  ],
+  variable: "--font-big-shoulders",
+  display: "swap",
+});
+
+// Utility face — inventory-tag mono for prices, codes and counts.
+const plexMono = localFont({
+  src: [
+    { path: "../fonts/IBMPlexMono-Regular.ttf", weight: "400" },
+    { path: "../fonts/IBMPlexMono-Bold.ttf", weight: "700" },
+  ],
+  variable: "--font-plex-mono",
   display: "swap",
 });
 
@@ -57,7 +81,10 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ro" className={inter.variable}>
+    <html
+      lang="ro"
+      className={`${workSans.variable} ${bigShoulders.variable} ${plexMono.variable}`}
+    >
       <body className="font-sans">
         {children}
         <Toaster richColors position="top-center" closeButton />

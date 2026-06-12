@@ -1,7 +1,9 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-work-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-big-shoulders), var(--font-work-sans), ui-sans-serif, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
 
   --animate-fade-in: fade-in 0.4s ease both;
   --animate-fade-in-up: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -74,6 +76,22 @@ body {
   );
   background-size: 200% 100%;
   animation: shimmer 1.6s linear infinite;
+}
+
+/* hazard tape — the depot's safety-stripe signature element */
+.hazard-stripe {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #f97316 0,
+    #f97316 14px,
+    #1c1917 14px,
+    #1c1917 28px
+  );
+}
+
+/* inventory-tag eyebrow: mono, spaced caps, like a depot shelf label */
+.tag-label {
+  @apply font-mono text-[11px] font-semibold uppercase tracking-[0.18em];
 }
 
 /* hide scrollbar for horizontal chip rows */

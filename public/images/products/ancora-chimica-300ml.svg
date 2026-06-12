@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+  <rect width="640" height="640" fill="#fafafa"/>
+  <rect width="640" height="640" fill="url(#bgGlow)"/>
+  <defs>
+    <radialGradient id="bgGlow" cx="0.5" cy="0.35" r="0.75">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f1f1f0"/>
+    </radialGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e4e4e7"/>
+      <stop offset="0.5" stop-color="#9ca3af"/>
+      <stop offset="1" stop-color="#d1d5db"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="320" cy="470" rx="175" ry="24" fill="#18181b" opacity="0.08"/>
+  
+  <g transform="rotate(-12 320 340)">
+    <rect x="138" y="288" width="20" height="104" rx="7" fill="#52525b"/>
+    <rect x="156" y="282" width="270" height="116" rx="14" fill="#fff" stroke="#d4d4d8" stroke-width="2"/>
+    <rect x="156" y="282" width="64" height="116" rx="14" fill="#dc2626"/>
+    <rect x="206" y="282" width="14" height="116" fill="#dc2626"/>
+    <path d="M426 304 L480 322 L480 358 L426 376 Z" fill="#a51d1d"/>
+    <rect x="478" y="330" width="62" height="20" rx="9" fill="#d4d4d8"/>
+    <text x="332" y="326" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700" fill="#dc2626" text-anchor="middle">ANCORĂ</text>
+    <text x="332" y="360" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#3f3f46" text-anchor="middle">CHIMICĂ · 300 ml</text>
+  </g>
+</svg>

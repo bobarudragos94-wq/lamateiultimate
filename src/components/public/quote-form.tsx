@@ -105,8 +105,13 @@ export function QuoteForm() {
               key={item.productId}
               className="flex animate-fade-in items-center gap-3 rounded-2xl border border-zinc-200 bg-white p-3.5 shadow-sm sm:gap-4 sm:p-4"
             >
-              <div className="hidden size-12 shrink-0 items-center justify-center rounded-xl bg-zinc-100 sm:flex">
-                <Package className="size-5 text-zinc-400" aria-hidden />
+              <div className="hidden size-12 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-zinc-100 sm:flex">
+                {item.imageUrl ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={item.imageUrl} alt="" className="size-full object-cover" />
+                ) : (
+                  <Package className="size-5 text-zinc-400" aria-hidden />
+                )}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold text-zinc-900">{item.name}</p>
@@ -160,7 +165,7 @@ export function QuoteForm() {
         </ul>
         <div className="mt-4 flex items-center justify-between rounded-2xl bg-zinc-900 px-5 py-4 text-white">
           <span className="text-sm font-medium text-zinc-300">Total estimativ</span>
-          <span className="text-lg font-bold">
+          <span className="font-mono text-lg font-bold">
             {total == null ? "Se calculează la ofertare" : formatPrice(total)}
           </span>
         </div>
