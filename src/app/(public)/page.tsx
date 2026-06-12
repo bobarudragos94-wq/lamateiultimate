@@ -12,9 +12,10 @@ import {
 } from "lucide-react";
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/db";
-import { categories } from "@/db/schema";
+import { categories, type Category } from "@/db/schema";
 
-export const revalidate = 300;
+// Rendered on demand so the build never depends on a populated database.
+export const dynamic = "force-dynamic";
 
 const benefits = [
   {
@@ -66,11 +67,16 @@ const steps = [
 ];
 
 export default async function HomePage() {
-  const categoryList = await db
-    .select()
-    .from(categories)
-    .where(eq(categories.isActive, true))
-    .orderBy(asc(categories.sortOrder));
+  let categoryList: Category[] = [];
+  try {
+    categoryList = await db
+      .select()
+      .from(categories)
+      .where(eq(categories.isActive, true))
+      .orderBy(asc(categories.sortOrder));
+  } catch (error) {
+    console.error("Failed to load categories:", error);
+  }
 
   return (
     <>
