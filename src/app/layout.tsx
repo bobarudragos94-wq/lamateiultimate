@@ -10,10 +10,22 @@ const inter = Inter({
   display: "swap",
 });
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+function getMetadataBase(): URL {
+  const raw = process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/+$/, "");
+  if (raw) {
+    // tolerate a value without protocol (e.g. "myapp.vercel.app")
+    const candidate = /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+    try {
+      return new URL(candidate);
+    } catch {
+      console.warn(`Invalid NEXT_PUBLIC_APP_URL "${raw}", falling back to localhost`);
+    }
+  }
+  return new URL("http://localhost:3000");
+}
 
 export const metadata: Metadata = {
-  metadataBase: new URL(appUrl),
+  metadataBase: getMetadataBase(),
   title: {
     default: "Depozit Construct — Materiale de construcții",
     template: "%s | Depozit Construct",
