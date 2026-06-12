@@ -1,0 +1,457 @@
+import "dotenv/config";
+import bcrypt from "bcryptjs";
+import { db } from "./index";
+import {
+  auditLogs,
+  categories,
+  internalNotes,
+  orderItems,
+  products,
+  quoteRequests,
+  users,
+} from "./schema";
+
+async function seed() {
+  console.log("Seeding database...");
+
+  // Clear existing data (order matters because of foreign keys)
+  await db.delete(auditLogs);
+  await db.delete(internalNotes);
+  await db.delete(orderItems);
+  await db.delete(quoteRequests);
+  await db.delete(products);
+  await db.delete(categories);
+  await db.delete(users);
+
+  // ---------- Users ----------
+  const [admin, staff] = await db
+    .insert(users)
+    .values([
+      {
+        name: "Andrei Popescu",
+        email: "admin@depozit.ro",
+        passwordHash: await bcrypt.hash("admin123", 10),
+        role: "ADMIN",
+      },
+      {
+        name: "Mihai Ionescu",
+        email: "staff@depozit.ro",
+        passwordHash: await bcrypt.hash("staff123", 10),
+        role: "STAFF",
+      },
+    ])
+    .returning();
+
+  // ---------- Categories ----------
+  const categoryRows = await db
+    .insert(categories)
+    .values([
+      { name: "Ciment și mortare", slug: "ciment-si-mortare", description: "Ciment, mortar, șapă autonivelantă", sortOrder: 1 },
+      { name: "Adezivi și gleturi", slug: "adezivi-si-gleturi", description: "Adezivi gresie/faianță, gleturi, tinciuri", sortOrder: 2 },
+      { name: "Gips-carton și profile", slug: "gips-carton-si-profile", description: "Plăci rigips, profile CD/UD, accesorii montaj", sortOrder: 3 },
+      { name: "Zidărie", slug: "zidarie", description: "BCA, cărămidă, boltari", sortOrder: 4 },
+      { name: "Lemn și plăci", slug: "lemn-si-placi", description: "OSB, cherestea, placaj", sortOrder: 5 },
+      { name: "Izolații", slug: "izolatii", description: "Polistiren, vată minerală, folii", sortOrder: 6 },
+      { name: "Organe de asamblare", slug: "organe-de-asamblare", description: "Șuruburi, dibluri, ancore", sortOrder: 7 },
+      { name: "Chimice și consumabile", slug: "chimice-si-consumabile", description: "Spume, silicoane, amorse", sortOrder: 8 },
+    ])
+    .returning();
+
+  const cat = Object.fromEntries(categoryRows.map((c) => [c.slug, c.id]));
+
+  // ---------- Products ----------
+  const productRows = await db
+    .insert(products)
+    .values([
+      {
+        categoryId: cat["ciment-si-mortare"],
+        name: "Ciment Holcim Structo Plus 40kg",
+        slug: "ciment-holcim-structo-plus-40kg",
+        description: "Ciment Portland compozit CEM II/B-M 42,5N, ideal pentru betoane și mortare de zidărie.",
+        unit: "sac",
+        price: 32.5,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["ciment-si-mortare"],
+        name: "Mortar zidărie M10 40kg",
+        slug: "mortar-zidarie-m10-40kg",
+        description: "Mortar uscat predozat pentru zidărie din cărămidă și BCA.",
+        unit: "sac",
+        price: 21.9,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["adezivi-si-gleturi"],
+        name: "Adeziv gresie și faianță Ceresit CM9 25kg",
+        slug: "adeziv-gresie-faianta-ceresit-cm9-25kg",
+        description: "Adeziv pe bază de ciment pentru plăci ceramice la interior.",
+        unit: "sac",
+        price: 28.9,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["adezivi-si-gleturi"],
+        name: "Glet interior Knauf Super Finish 20kg",
+        slug: "glet-interior-knauf-super-finish-20kg",
+        description: "Glet de finisaj gata preparat, aplicare ușoară, finisaj neted.",
+        unit: "sac",
+        price: 64.0,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["adezivi-si-gleturi"],
+        name: "Adeziv polistiren Baumit ProContact 25kg",
+        slug: "adeziv-polistiren-baumit-procontact-25kg",
+        description: "Adeziv și masă de șpaclu pentru sisteme termoizolante.",
+        unit: "sac",
+        price: 33.5,
+        availability: "LIMITED",
+      },
+      {
+        categoryId: cat["gips-carton-si-profile"],
+        name: "Placă gips-carton Rigips RB 12.5mm 1200x2600",
+        slug: "placa-gips-carton-rigips-rb-125mm",
+        description: "Placă standard pentru pereți și plafoane la interior.",
+        unit: "bucata",
+        price: 42.9,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["gips-carton-si-profile"],
+        name: "Profil CD 60 3m",
+        slug: "profil-cd-60-3m",
+        description: "Profil zincat pentru structuri de plafoane și placări.",
+        unit: "bucata",
+        price: 13.5,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["gips-carton-si-profile"],
+        name: "Profil UD 28 3m",
+        slug: "profil-ud-28-3m",
+        description: "Profil de ghidaj zincat pentru sisteme de gips-carton.",
+        unit: "bucata",
+        price: 9.8,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["zidarie"],
+        name: "BCA Ytong NF 599x199x249",
+        slug: "bca-ytong-nf",
+        description: "Bloc de zidărie din beton celular autoclavizat, termoizolant.",
+        unit: "bucata",
+        price: 14.2,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["zidarie"],
+        name: "Cărămidă Porotherm 25 N+F",
+        slug: "caramida-porotherm-25-nf",
+        description: "Bloc ceramic cu nut și feder pentru ziduri portante de 25cm.",
+        unit: "bucata",
+        price: 7.9,
+        availability: "ON_ORDER",
+      },
+      {
+        categoryId: cat["zidarie"],
+        name: "BCA palet complet (60 buc)",
+        slug: "bca-palet-complet",
+        description: "Palet complet BCA Ytong NF — preț negociabil în funcție de cantitate.",
+        unit: "palet",
+        price: null,
+        availability: "ON_ORDER",
+      },
+      {
+        categoryId: cat["lemn-si-placi"],
+        name: "OSB3 12mm 1250x2500",
+        slug: "osb3-12mm",
+        description: "Placă OSB3 rezistentă la umiditate, pentru construcții și amenajări.",
+        unit: "bucata",
+        price: 56.0,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["lemn-si-placi"],
+        name: "OSB3 18mm 1250x2500",
+        slug: "osb3-18mm",
+        description: "Placă OSB3 pentru pardoseli și structuri portante.",
+        unit: "bucata",
+        price: 89.0,
+        availability: "LIMITED",
+      },
+      {
+        categoryId: cat["izolatii"],
+        name: "Polistiren expandat EPS 80 10cm",
+        slug: "polistiren-eps-80-10cm",
+        description: "Polistiren pentru fațade, pachet de 0,5 mc (5 mp la 10cm).",
+        unit: "bax",
+        price: 95.0,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["izolatii"],
+        name: "Vată minerală bazaltică 10cm",
+        slug: "vata-minerala-bazaltica-10cm",
+        description: "Vată bazaltică pentru izolații termice și fonice, rezistentă la foc.",
+        unit: "mp",
+        price: 28.5,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["izolatii"],
+        name: "Folie anticondens 1.5x50m",
+        slug: "folie-anticondens",
+        description: "Folie anticondens pentru acoperișuri, rolă de 75 mp.",
+        unit: "rola",
+        price: 145.0,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["organe-de-asamblare"],
+        name: "Șuruburi rigips autofiletante 3.5x25 (1000 buc)",
+        slug: "suruburi-rigips-35x25",
+        description: "Șuruburi cu filet rapid pentru fixarea plăcilor pe profile metalice.",
+        unit: "set",
+        price: 35.0,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["organe-de-asamblare"],
+        name: "Dibluri fațadă cu cui metalic 10x160 (100 buc)",
+        slug: "dibluri-fatada-10x160",
+        description: "Dibluri pentru fixarea termoizolației pe zidărie.",
+        unit: "set",
+        price: 48.0,
+        availability: "LIMITED",
+      },
+      {
+        categoryId: cat["chimice-si-consumabile"],
+        name: "Spumă poliuretanică de pistol 750ml",
+        slug: "spuma-poliuretanica-pistol-750ml",
+        description: "Spumă PU profesională pentru montaj tâmplărie și etanșări.",
+        unit: "bucata",
+        price: 26.5,
+        availability: "IN_STOCK",
+      },
+      {
+        categoryId: cat["chimice-si-consumabile"],
+        name: "Amorsă perete 10L",
+        slug: "amorsa-perete-10l",
+        description: "Amorsă universală pentru pregătirea suprafețelor înainte de finisaj.",
+        unit: "bucata",
+        price: 52.0,
+        availability: "IN_STOCK",
+      },
+    ])
+    .returning();
+
+  const prod = Object.fromEntries(productRows.map((p) => [p.slug, p]));
+
+  // ---------- Demo quote requests ----------
+  const now = Date.now();
+  const daysAgo = (days: number, hours = 0) => new Date(now - days * 86400000 - hours * 3600000);
+
+  type DemoItem = { slug: string; quantity: number };
+  const demoRequests: {
+    code: string;
+    customerName: string;
+    phone: string;
+    deliveryAddress: string;
+    customerNotes: string | null;
+    desiredDeliveryDate: string | null;
+    status: (typeof quoteRequests.$inferInsert)["status"];
+    createdAt: Date;
+    items: DemoItem[];
+    notes?: { author: typeof admin | typeof staff; content: string }[];
+  }[] = [
+    {
+      code: "CMD-2026-DEMO1",
+      customerName: "Vasile Marin",
+      phone: "0722 111 222",
+      deliveryAddress: "Str. Zorilor 14, Cluj-Napoca",
+      customerNotes: "Sunați înainte de livrare, accesul se face prin spatele blocului.",
+      desiredDeliveryDate: new Date(now + 2 * 86400000).toISOString().slice(0, 10),
+      status: "NEW",
+      createdAt: daysAgo(0, 2),
+      items: [
+        { slug: "ciment-holcim-structo-plus-40kg", quantity: 20 },
+        { slug: "adeziv-gresie-faianta-ceresit-cm9-25kg", quantity: 10 },
+      ],
+    },
+    {
+      code: "CMD-2026-DEMO2",
+      customerName: "SC ConstructPro SRL",
+      phone: "0744 333 444",
+      deliveryAddress: "Șantier Str. Fabricii 102, Cluj-Napoca",
+      customerNotes: "Avem nevoie de factură pe firmă. Persoană de contact: dl. Rusu.",
+      desiredDeliveryDate: new Date(now + 5 * 86400000).toISOString().slice(0, 10),
+      status: "NEW",
+      createdAt: daysAgo(0, 5),
+      items: [
+        { slug: "placa-gips-carton-rigips-rb-125mm", quantity: 60 },
+        { slug: "profil-cd-60-3m", quantity: 80 },
+        { slug: "profil-ud-28-3m", quantity: 40 },
+        { slug: "suruburi-rigips-35x25", quantity: 5 },
+      ],
+    },
+    {
+      code: "CMD-2026-DEMO3",
+      customerName: "Ioana Dumitrescu",
+      phone: "0733 555 666",
+      deliveryAddress: "Com. Florești, str. Eroilor 8",
+      customerNotes: null,
+      desiredDeliveryDate: null,
+      status: "IN_REVIEW",
+      createdAt: daysAgo(1),
+      items: [
+        { slug: "polistiren-eps-80-10cm", quantity: 15 },
+        { slug: "adeziv-polistiren-baumit-procontact-25kg", quantity: 25 },
+        { slug: "dibluri-fatada-10x160", quantity: 8 },
+      ],
+      notes: [{ author: staff, content: "Verific stocul de polistiren la furnizor, revin azi." }],
+    },
+    {
+      code: "CMD-2026-DEMO4",
+      customerName: "Gheorghe Stan",
+      phone: "0755 777 888",
+      deliveryAddress: "Str. Câmpului 33, Apahida",
+      customerNotes: "Cât ar costa transportul până în Apahida?",
+      desiredDeliveryDate: new Date(now + 7 * 86400000).toISOString().slice(0, 10),
+      status: "QUOTED",
+      createdAt: daysAgo(2),
+      items: [
+        { slug: "bca-palet-complet", quantity: 4 },
+        { slug: "mortar-zidarie-m10-40kg", quantity: 30 },
+      ],
+      notes: [
+        { author: admin, content: "Ofertă trimisă pe WhatsApp: 4 paleti BCA la 850 lei/palet + transport 120 lei." },
+      ],
+    },
+    {
+      code: "CMD-2026-DEMO5",
+      customerName: "Radu Munteanu",
+      phone: "0766 999 000",
+      deliveryAddress: "Str. Memorandumului 5, Cluj-Napoca",
+      customerNotes: "Renovez o mansardă, am nevoie de tot materialul până vineri.",
+      desiredDeliveryDate: new Date(now + 1 * 86400000).toISOString().slice(0, 10),
+      status: "CONFIRMED",
+      createdAt: daysAgo(3),
+      items: [
+        { slug: "osb3-12mm", quantity: 25 },
+        { slug: "vata-minerala-bazaltica-10cm", quantity: 80 },
+        { slug: "folie-anticondens", quantity: 2 },
+        { slug: "spuma-poliuretanica-pistol-750ml", quantity: 6 },
+      ],
+      notes: [{ author: staff, content: "Client vechi, plătește la livrare. Confirmat telefonic." }],
+    },
+    {
+      code: "CMD-2026-DEMO6",
+      customerName: "Elena Pop",
+      phone: "0721 123 456",
+      deliveryAddress: "Str. Dorobanților 99, Cluj-Napoca",
+      customerNotes: null,
+      desiredDeliveryDate: null,
+      status: "PREPARED",
+      createdAt: daysAgo(4),
+      items: [
+        { slug: "glet-interior-knauf-super-finish-20kg", quantity: 8 },
+        { slug: "amorsa-perete-10l", quantity: 2 },
+      ],
+      notes: [{ author: staff, content: "Comanda pregătită pe rampa 2, așteaptă ridicare." }],
+    },
+    {
+      code: "CMD-2026-DEMO7",
+      customerName: "SC Casa Verde SRL",
+      phone: "0740 222 333",
+      deliveryAddress: "Șantier Borhanci, parcela 27",
+      customerNotes: "Livrare cu macara dacă se poate.",
+      desiredDeliveryDate: null,
+      status: "DELIVERED",
+      createdAt: daysAgo(9),
+      items: [
+        { slug: "bca-ytong-nf", quantity: 240 },
+        { slug: "mortar-zidarie-m10-40kg", quantity: 40 },
+        { slug: "ciment-holcim-structo-plus-40kg", quantity: 15 },
+      ],
+      notes: [{ author: admin, content: "Livrat cu camionul mare, totul OK. De facturat diferența de transport." }],
+    },
+    {
+      code: "CMD-2026-DEMO8",
+      customerName: "Dan Oprea",
+      phone: "0788 444 555",
+      deliveryAddress: "Str. Horea 21, Cluj-Napoca",
+      customerNotes: "Mai sunați-mă să discutăm cantitățile.",
+      desiredDeliveryDate: null,
+      status: "CANCELLED",
+      createdAt: daysAgo(6),
+      items: [{ slug: "caramida-porotherm-25-nf", quantity: 500 }],
+      notes: [{ author: staff, content: "Clientul a renunțat — a găsit cărămidă mai ieftină în altă parte." }],
+    },
+  ];
+
+  for (const demo of demoRequests) {
+    let estimatedTotal: number | null = 0;
+    for (const item of demo.items) {
+      const product = prod[item.slug];
+      if (product.price == null) {
+        estimatedTotal = null;
+        break;
+      }
+      estimatedTotal += product.price * item.quantity;
+    }
+
+    const [request] = await db
+      .insert(quoteRequests)
+      .values({
+        code: demo.code,
+        customerName: demo.customerName,
+        phone: demo.phone,
+        deliveryAddress: demo.deliveryAddress,
+        customerNotes: demo.customerNotes,
+        desiredDeliveryDate: demo.desiredDeliveryDate,
+        status: demo.status,
+        estimatedTotal,
+        createdAt: demo.createdAt,
+        updatedAt: demo.createdAt,
+      })
+      .returning();
+
+    await db.insert(orderItems).values(
+      demo.items.map((item) => {
+        const product = prod[item.slug];
+        return {
+          requestId: request.id,
+          productId: product.id,
+          productName: product.name,
+          unit: product.unit,
+          quantity: item.quantity,
+          unitPrice: product.price,
+        };
+      })
+    );
+
+    if (demo.notes) {
+      await db.insert(internalNotes).values(
+        demo.notes.map((note) => ({
+          requestId: request.id,
+          authorId: note.author.id,
+          authorName: note.author.name,
+          content: note.content,
+          createdAt: demo.createdAt,
+        }))
+      );
+    }
+  }
+
+  console.log("Seed complete.");
+  console.log("Admin login:  admin@depozit.ro / admin123");
+  console.log("Staff login:  staff@depozit.ro / staff123");
+}
+
+seed()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error("Seed failed:", error);
+    process.exit(1);
+  });
